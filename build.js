@@ -46,6 +46,10 @@ const upcoming = all.filter((m) => (m.end ?? m.start) >= TODAY);
 // list: the soonest actual race, not a test day or a cancelled meeting.
 const nextUp = upcoming.find((m) => (m.kind ?? 'race') === 'race' && m.status !== 'cancelled') ?? null;
 const hasExamples = all.some((m) => m.example);
+// The season people are searching for. Every query that reaches this site
+// carries a year — "bemsee 2027 dates" — so titles and descriptions have to
+// carry it too, or the result does not look like an answer to the question.
+const SEASON = (nextUp ?? all[0])?.start.slice(0, 4) ?? String(new Date().getFullYear());
 
 /* ---------- clash detection ----------
    Two meetings clash if their dates overlap and a different club runs each —
@@ -691,8 +695,8 @@ for (const c of usedCircuits) {
   const up = list.filter((m) => (m.end ?? m.start) >= TODAY);
   const links = circuitLinks[c.id] ?? [];
   write(`circuit/${c.id}/index.html`, layout({
-    title: `${c.name} motorcycle race dates \u2014 ${SITE.name}`,
-    description: `Motorcycle race meetings at ${c.name}, ${c.region}. ${up.length} upcoming, across every organising club.`,
+    title: `${c.name} ${SEASON} race dates \u2014 ${SITE.name}`,
+    description: `Every motorcycle race meeting at ${c.name} in ${SEASON} \u2014 ${up.length} dates from ${new Set(list.map((m) => m.organiser)).size} clubs${PACE.some((x) => x.circuit === c.id) ? ', with 2026 lap times to measure yourself against' : ''}.`,
     canonical: `/circuit/${c.id}/`, base: '../../', jsonld: up.slice(0, 40).map(eventLd),
     body: `<nav class="crumbs"><a href="../../">Calendar</a> <span>/</span> ${esc(c.name)}</nav>
 <h1>${esc(c.name)}</h1>
@@ -726,12 +730,13 @@ for (const o of organisers) {
   const up = list.filter((m) => (m.end ?? m.start) >= TODAY);
   const awaiting = list.length === 0;
   write(`organiser/${o.id}/index.html`, layout({
-    title: awaiting
-      ? `${o.name} 2027 race dates \u2014 ${SITE.name}`
-      : `${o.name} race calendar \u2014 ${SITE.name}`,
+    // Short form in the title to leave room before Google truncates, but not
+    // when it is an initialism too terse to match what people type: "NG" is the
+    // page earning the most clicks on the site and they search "NG Road Racing".
+    title: `${(o.short && o.short.length >= 4) ? o.short : o.name} ${SEASON} race dates \u2014 ${SITE.name}`,
     description: awaiting
-      ? `${o.name} have not published their 2027 race dates yet. They will be listed here as soon as they do.`
-      : `${o.name} motorcycle race meeting dates. ${up.length} upcoming.`,
+      ? `${o.name} have not published their ${SEASON} race dates yet. This page updates the day they do, and there is a calendar feed you can subscribe to now.`
+      : `All ${up.length} ${o.short ?? o.name} ${SEASON} race dates \u2014 venues, entry deadlines, and which weekends clash with other clubs.${(o.short && o.short !== o.name) ? ` ${o.name}.` : ''}`,
     canonical: `/organiser/${o.id}/`, base: '../../', jsonld: up.slice(0, 40).map(eventLd),
     body: `<nav class="crumbs"><a href="../../">Calendar</a> <span>/</span> ${esc(o.short ?? o.name)}</nav>
 <h1>${esc(o.name)}</h1>
@@ -764,8 +769,8 @@ for (const s of championships) {
   if (!list.length) continue;
   const up = list.filter((m) => (m.end ?? m.start) >= TODAY);
   write(`championship/${s.id}/index.html`, layout({
-    title: `${s.name} calendar \u2014 ${SITE.name}`,
-    description: `${s.name} round dates and host clubs. ${up.length} upcoming.`,
+    title: `${s.name} ${SEASON} rounds \u2014 ${SITE.name}`,
+    description: `All ${up.length} ${s.name} rounds in ${SEASON} \u2014 dates, venues and the clubs running each one.`,
     canonical: `/championship/${s.id}/`, base: '../../', jsonld: up.slice(0, 40).map(eventLd),
     body: `<nav class="crumbs"><a href="../../">Calendar</a> <span>/</span> ${esc(s.name)}</nav>
 <h1>${esc(s.name)}</h1>
