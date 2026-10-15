@@ -258,4 +258,36 @@ export const meetings = [
   { id: 'emra-2027-r6', start: '2027-10-03',
     circuit: 'mallory', organiser: 'emra', status: 'confirmed', round: '6',
     source: 'EMRA 2027 race dates announcement' },
+
+  /* ---------------- Darley Moor 2027 ----------------
+     Club's own published dates. The CTC and Basic Rider Assessment is the ACU
+     licence course rather than a meeting, so it is filed as a race school — the
+     nearest kind this site has. Stars at Darley is the only two-day round.    */
+  { id: 'darley-moor-2027-ctc', start: '2027-03-06',
+    circuit: 'darley-moor', organiser: 'darley-moor', kind: 'school', status: 'confirmed',
+    name: 'CTC & Basic Rider Assessment',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-test', start: '2027-04-03',
+    circuit: 'darley-moor', organiser: 'darley-moor', kind: 'test', status: 'confirmed',
+    name: 'Test Day',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-r1', start: '2027-04-18',
+    circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed', round: '1',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-r2', start: '2027-05-09',
+    circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed', round: '2',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-r3', start: '2027-06-20',
+    circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed', round: '3',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-r4', start: '2027-08-15',
+    circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed', round: '4',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-r5', start: '2027-09-12',
+    circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed', round: '5',
+    source: 'Darley Moor MRRC 2027 dates' },
+  { id: 'darley-moor-2027-stars', start: '2027-10-09', end: '2027-10-10',
+    circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed',
+    name: 'Stars at Darley',
+    source: 'Darley Moor MRRC 2027 dates' },
 ];
