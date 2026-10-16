@@ -552,6 +552,36 @@ table#pacetable{border-collapse:separate;border-spacing:0;width:100%;
 /* The planner's own ask, which only appears once a season has been picked. */
 .signup--plan{margin-top:2.5rem;border-left:3px solid var(--accent)}
 
+/* ---------- season at a glance ----------
+   Month per row, week per cell. The empty weeks are rendered, not skipped — a
+   grid that hides its gaps is just a list with borders. */
+.season{margin:1.5rem 0 0}
+.season-row{margin:0 0 1.25rem}
+.season-row h2{display:flex;align-items:baseline;gap:.7rem;font-size:1.35rem;
+  margin:0 0 .5rem;border-bottom:1px solid var(--line);padding-bottom:.4rem}
+.season-row h2 .yr{font-family:var(--mono);font-size:.8125rem;font-weight:400;
+  color:var(--muted);letter-spacing:.14em}
+.season-weeks{display:grid;gap:.5rem;grid-template-columns:repeat(var(--wk-cols,5),1fr)}
+.wk{background:var(--bg-2);border:1px solid var(--line);border-left:3px solid var(--line-2);
+  padding:.5rem .55rem;display:flex;flex-direction:column;gap:.3rem;min-height:5.5rem}
+/* Red rule where two clubs run at once: the weeks that cost you something. */
+.wk--choice{border-left-color:var(--accent)}
+.wk--free{opacity:.5;border-left-style:dotted}
+.wk-date{font-family:var(--mono);font-size:.75rem;color:var(--muted);
+  letter-spacing:.08em;text-transform:uppercase}
+.wk-none{font-family:var(--mono);font-size:.75rem;color:var(--muted);font-style:italic}
+.wk-m{display:block;text-decoration:none;background:var(--panel-2);
+  border:1px solid var(--line);padding:.25rem .4rem;transition:border-color .12s,background .12s}
+.wk-m:hover{border-color:var(--accent);background:var(--hover)}
+.wk-m b{display:block;font-family:var(--display);font-weight:700;font-size:.9375rem;
+  text-transform:uppercase;letter-spacing:.03em;line-height:1.1;color:var(--ink)}
+.wk-m span{display:block;font-family:var(--mono);font-size:.6875rem;color:var(--muted);
+  letter-spacing:.08em}
+/* Test days and schools are context, not the thing you are choosing between. */
+.wk-m--other{opacity:.62}
+@media (max-width:60rem){ .season-weeks{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:30rem){ .season-weeks{grid-template-columns:1fr} .wk{min-height:0} }
+
 /* ---------- promos, newsletter, feeds ---------- */
 .promo{position:relative;background:var(--bg-2);border:1px solid var(--line);margin:1.5rem 0}
 .promo a{display:block;padding:1rem 1.1rem;text-decoration:none}

@@ -495,7 +495,9 @@ ${ticker()}
       </svg>
       <span><b>${esc(SITE.name)}</b><span class="brand-sub">UK motorcycle club racing</span></span>
     </a>
-    <nav><a href="${base}plan/">Plan</a><a href="${base}clubs/">Clubs</a><a href="${base}clashes/">Clashes</a><a href="${base}feeds/">Feeds</a><a href="${base}about/">About</a></nav>
+    <!-- Five items is what fits a 320px screen without the nav pushing the page
+         sideways. About lives in the footer, which is where people look for it. -->
+    <nav><a href="${base}season/">Season</a><a href="${base}plan/">Plan</a><a href="${base}clubs/">Clubs</a><a href="${base}clashes/">Clashes</a><a href="${base}feeds/">Feeds</a></nav>
     <div class="headstats">
       <span><b class="hs-meetings">${raceCount}</b> Meetings</span>
       <span><b class="hs-clubs">${new Set(upcoming.map((m) => m.organiser)).size}</b> Clubs</span>
@@ -954,7 +956,105 @@ ${planPrompt('../')}
   }));
 }
 
-// clubs index// clubs index
+// season at a glance
+// A week grid rather than a day grid. Day cells would be 19% filled, because
+// almost everything runs at a weekend; week cells are 94% filled. That also
+// changes what the page is for: with only two free weeks in the season, the
+// question is not "when am I free" but "what am I giving up each weekend".
+{
+  const mondayOf = (d) => {
+    const t = new Date(d + 'T00:00:00Z');
+    t.setUTCDate(t.getUTCDate() - ((t.getUTCDay() + 6) % 7));
+    return t.toISOString().slice(0, 10);
+  };
+  const pick = upcoming.filter((m) => m.status !== 'cancelled');
+  const byWeek = new Map();
+  for (const m of pick) {
+    const k = mondayOf(m.start);
+    if (!byWeek.has(k)) byWeek.set(k, []);
+    byWeek.get(k).push(m);
+  }
+  // Every week from the first to the last, including the empty ones — an absent
+  // row would hide the very thing a grid is for.
+  const weeks = [];
+  if (byWeek.size) {
+    const keys = [...byWeek.keys()].sort();
+    for (let d = keys[0]; d <= keys[keys.length - 1]; ) {
+      weeks.push({ k: d, items: (byWeek.get(d) ?? []).slice().sort((a, b) => a.start.localeCompare(b.start)) });
+      const t = new Date(d + 'T00:00:00Z');
+      t.setUTCDate(t.getUTCDate() + 7);
+      d = t.toISOString().slice(0, 10);
+    }
+  }
+  const overlaps2 = (a, b) => a.start <= (b.end ?? b.start) && b.start <= (a.end ?? a.start);
+  const isChoice = (items) => items.some((a, x) => items.some((b, y) =>
+    y > x && a.organiser !== b.organiser && (a.kind ?? 'race') === 'race'
+    && (b.kind ?? 'race') === 'race' && overlaps2(a, b)));
+  // Group into month rows by the month the week mostly falls in.
+  const rows = [];
+  for (const w of weeks) {
+    const t = new Date(w.k + 'T00:00:00Z');
+    t.setUTCDate(t.getUTCDate() + 3);
+    const mk = t.toISOString().slice(0, 7);
+    if (!rows.length || rows.at(-1).mk !== mk) rows.push({ mk, cells: [] });
+    rows.at(-1).cells.push(w);
+  }
+  const maxCols = Math.max(...rows.map((r) => r.cells.length));
+  const freeWeeks = weeks.filter((w) => !w.items.length).length;
+  const choiceWeeks = weeks.filter((w) => isChoice(w.items)).length;
+
+  const cell = (w) => {
+    const [, mo, dd] = w.k.split('-');
+    const label = `${+dd} ${MON[+mo - 1]}`;
+    if (!w.items.length) return `<div class="wk wk--free"><span class="wk-date">${esc(label)}</span><span class="wk-none">Nothing on</span></div>`;
+    return `<div class="wk${isChoice(w.items) ? ' wk--choice' : ''}">
+      <span class="wk-date">${esc(label)}</span>
+      ${w.items.map((m) => {
+        const o = O[m.organiser];
+        const c = m.circuit ? C[m.circuit] : null;
+        const kind = m.kind ?? 'race';
+        return `<a class="wk-m${kind !== 'race' ? ' wk-m--other' : ''}" href="../meeting/${m.id}/" title="${
+          esc(`${c ? c.name : 'Venue TBC'} \u2014 ${o?.name ?? m.organiser}${kind !== 'race' ? ' (' + KINDS[kind] + ')' : ''}`)}"><b>${
+          esc(o?.short ?? m.organiser)}</b><span>${esc(c ? c.short : 'TBC')}</span></a>`;
+      }).join('')}
+    </div>`;
+  };
+
+  write('season/index.html', layout({
+    title: `${SEASON} season at a glance \u2014 ${SITE.name}`,
+    description: `Every week of the ${SEASON} UK motorcycle racing season on one page \u2014 who is racing where, and the ${choiceWeeks} weekends where you have to choose between clubs.`,
+    canonical: '/season/', base: '../', wide: true,
+    body: `<nav class="crumbs"><a href="../">Calendar</a> <span>/</span> Season at a glance</nav>
+<h1>${esc(SEASON)} season at a glance</h1>
+<p class="lede">Every week of the season, so you can see the shape of it rather than scroll a list.
+Each block is a week; each tag is a meeting, with the club above and the circuit below.</p>
+
+<div class="stats">
+  <div class="stat"><b>${weeks.length}</b><span>Weeks in the season</span></div>
+  <div class="stat"><b>${weeks.length - freeWeeks}</b><span>With something on</span></div>
+  <div class="stat stat--alert"><b>${choiceWeeks}</b><span>Force a choice</span></div>
+  <div class="stat"><b>${freeWeeks}</b><span>Completely clear</span></div>
+</div>
+
+<p class="pace-note">Only ${freeWeeks} ${freeWeeks === 1 ? 'week of the season has' : 'weeks of the season have'}
+nothing on at all, so the planning question is rarely when you are free \u2014 it is what you give up.
+Weeks ruled in red are ones where two clubs run at once.</p>
+
+<div class="season" style="--wk-cols:${maxCols}">
+${rows.map((r) => {
+  const [y, mo] = r.mk.split('-');
+  return `  <div class="season-row">
+    <h2>${esc(MONTH[+mo - 1])} <span class="yr">${esc(y)}</span></h2>
+    <div class="season-weeks">${r.cells.map(cell).join('')}</div>
+  </div>`;
+}).join('\n')}
+</div>
+
+<p class="subscribe"><a href="../plan/">Pick your season \u2192</a></p>`,
+  }));
+}
+
+// clubs index// clubs index// clubs index
 {
   const published = organisers.filter((o) => all.some((m) => m.organiser === o.id));
   const awaiting = organisers.filter((o) => !all.some((m) => m.organiser === o.id));
