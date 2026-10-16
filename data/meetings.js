@@ -290,4 +290,35 @@ export const meetings = [
     circuit: 'darley-moor', organiser: 'darley-moor', status: 'confirmed',
     name: 'Stars at Darley',
     source: 'Darley Moor MRRC 2027 dates' },
+
+  /* ---------------- NG Road Racing 2027 ----------------
+     Three races per round, so each weekend covers three championship rounds —
+     hence the ranges. Taken from a 2027 season planner table rather than NG's
+     own announcement; the same table's BEMSEE, No Limits and EMRA rows agree
+     exactly with dates already held here, which is some corroboration, but the
+     venues carry no layout so none is recorded.                               */
+  { id: 'ng-2027-r1-3', start: '2027-03-20', end: '2027-03-21',
+    circuit: 'brands-hatch', organiser: 'ng', status: 'confirmed', round: '1–3',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r4-6', start: '2027-04-17', end: '2027-04-18',
+    circuit: 'cadwell', organiser: 'ng', status: 'confirmed', round: '4–6',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r7-9', start: '2027-05-08', end: '2027-05-09',
+    circuit: 'anglesey', organiser: 'ng', status: 'confirmed', round: '7–9',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r10-12', start: '2027-06-12', end: '2027-06-13',
+    circuit: 'castle-combe', organiser: 'ng', status: 'confirmed', round: '10–12',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r13-15', start: '2027-07-24', end: '2027-07-25',
+    circuit: 'snetterton', organiser: 'ng', status: 'confirmed', round: '13–15',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r16-18', start: '2027-08-21', end: '2027-08-22',
+    circuit: 'donington', organiser: 'ng', status: 'confirmed', round: '16–18',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r19-20', start: '2027-09-11',
+    circuit: 'oulton', organiser: 'ng', status: 'confirmed', round: '19–20',
+    source: 'NG Road Racing 2027 dates (season planner)' },
+  { id: 'ng-2027-r21-23', start: '2027-10-09', end: '2027-10-10',
+    circuit: 'pembrey', organiser: 'ng', status: 'confirmed', round: '21–23',
+    source: 'NG Road Racing 2027 dates (season planner)' },
 ];
