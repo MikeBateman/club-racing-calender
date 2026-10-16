@@ -46,6 +46,11 @@ export const organisers = [
   { id: 'southern-100',  name: 'Southern 100 Racing',                     short: 'Southern 100', website: null },
   { id: 'mcui-ulster',   name: 'MCUI Ulster Centre clubs',                short: 'MCUI Ulster', website: null },
   { id: 'melville',      name: 'Melville Motor Club',                     short: 'Melville', website: null },
+  { id: 'kmsc',          name: 'Knockhill Motor Sports Club (KMSC)',      short: 'KMSC',     website: 'https://www.knockhill.com/events/kmsc',
+    note: 'Knockhill is Scotland\u2019s only short circuit, and KMSC is the club that races on it \u2014 '
+      + 'the club rounds double as the Scottish Championship. Racing here is licensed through the SACU '
+      + 'rather than the ACU, so the club never shows up on the ACU permit list. Entries and results go '
+      + 'through knockhill.alphatiming.co.uk, which needs an account.' },
   { id: 'bsb',           name: 'British Superbike Championship',          short: 'BSB',      website: 'https://www.britishsuperbike.com',
     note: 'Open to club racers, but a BSB entry needs an ACU national licence and a series '
       + 'registration \u2014 a different proposition from entering a club round, and a more '

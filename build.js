@@ -242,7 +242,7 @@ function meetingRow(m, { base, next }) {
 const LISTHEAD = `<div class="listhead"><div>Date</div><div>Meeting</div><div>Club</div><div>Status</div><div></div></div>`;
 
 function monthList(list, { base, next = null }) {
-  if (!list.length) return `<p class="empty">No meetings in the calendar yet \u2014 add them in data/meetings.js</p>`;
+  if (!list.length) return `<p class="empty">No dates in the calendar yet.</p>`;
   const groups = [];
   for (const m of list) {
     const k = monthKey(m);
@@ -1088,7 +1088,7 @@ write('clashes/index.html', layout({
 <p class="lede">Weekends where two clubs are running at once, so you have to pick one.
 ${clashWeekends} such weekends in the season, accounting for ${upcomingClashes.length} of the
 ${upcoming.filter((m) => (m.kind ?? 'race') === 'race').length} upcoming race meetings listed below.</p>
-${upcomingClashes.length ? LISTHEAD + monthList(upcomingClashes, { base: '../' }) : '<p class="empty">No clashes in the calendar. Add more clubs and that will change.</p>'}`,
+${upcomingClashes.length ? LISTHEAD + monthList(upcomingClashes, { base: '../' }) : '<p class="empty">No clashes in the calendar \u2014 every meeting has a weekend to itself.</p>'}`,
 }));
 
 // about
