@@ -46,4 +46,8 @@ export const organisers = [
   { id: 'southern-100',  name: 'Southern 100 Racing',                     short: 'Southern 100', website: null },
   { id: 'mcui-ulster',   name: 'MCUI Ulster Centre clubs',                short: 'MCUI Ulster', website: null },
   { id: 'melville',      name: 'Melville Motor Club',                     short: 'Melville', website: null },
+  { id: 'bsb',           name: 'British Superbike Championship',          short: 'BSB',      website: 'https://www.britishsuperbike.com',
+    note: 'Open to club racers, but a BSB entry needs an ACU national licence and a series '
+      + 'registration \u2014 a different proposition from entering a club round, and a more '
+      + 'expensive one. Listed here because it is a date you may be choosing against.' },
 ];

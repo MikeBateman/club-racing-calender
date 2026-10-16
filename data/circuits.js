@@ -40,4 +40,6 @@ export const circuits = [
   { id: 'cookstown',     short: 'CKS', name: 'Cookstown (Orritor)', region: 'Northern Ireland', type: 'road' },
   { id: 'tandragee',     short: 'TAN', name: 'Tandragee',           region: 'Northern Ireland', type: 'road' },
   { id: 'armoy',         short: 'ARM', name: 'Armoy',               region: 'Northern Ireland', type: 'road' },
+  // Not in the UK, but BSB's Dutch round is part of a British season.
+  { id: 'assen',         short: 'ASN', name: 'TT Circuit Assen',   region: 'Netherlands',   type: 'short' },
 ];
