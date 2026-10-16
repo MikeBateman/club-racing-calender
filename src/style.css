@@ -306,6 +306,9 @@ a.stat:hover{background:var(--hover)}
   background:var(--panel-2);border:1px solid var(--line-2);
   box-shadow:0 8px 24px rgba(0,0,0,.45)}
 :root[data-theme="light"] .msel-list{box-shadow:0 8px 24px rgba(0,0,0,.18)}
+/* Hung from the right edge instead when filter.js finds the open panel would
+   run off a narrow screen. */
+.msel-list--flip{left:auto;right:0}
 .msel-list li{border-bottom:1px solid var(--line)}
 .msel-list li:last-child{border-bottom:0}
 .msel-list label{display:flex;align-items:center;gap:.55rem;padding:.5rem .65rem;

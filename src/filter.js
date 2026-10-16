@@ -9,6 +9,18 @@
     var label = el.querySelector('.msel-label');
     var allText = label.textContent;
     var noun = el.dataset.noun;
+    // The panel hangs from the button's left edge and is wider than the button,
+    // so a button that wrapped toward the right of a narrow screen would open
+    // its list past the viewport edge. Measured on open, because where the
+    // button sits depends on how the filter bar wrapped.
+    var list = el.querySelector('.msel-list');
+    el.addEventListener('toggle', function () {
+      if (!el.open) return;
+      list.classList.remove('msel-list--flip');
+      if (list.getBoundingClientRect().right > document.documentElement.clientWidth - 8) {
+        list.classList.add('msel-list--flip');
+      }
+    });
     return {
       el: el,
       values: function () {

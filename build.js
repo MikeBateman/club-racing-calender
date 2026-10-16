@@ -671,8 +671,11 @@ write('index.html', layout({
       // clubs you actually race with — so these are checkbox dropdowns rather
       // than single selects. A <details> gives the open/close for free;
       // filter.js reads the checked boxes and keeps the summary label honest.
+      // The filter name is visually-hidden text inside the summary, not an
+      // aria-label: a label would override the visible "2 circuits" state and
+      // a screen reader would never hear what is picked.
       const msel = (id, label, allText, noun, opts) => `<details class="msel" id="${id}" data-noun="${noun}">
-      <summary aria-label="${label}"><span class="msel-label">${allText}</span><span class="msel-caret">▾</span></summary>
+      <summary><span class="vh">${label}:</span> <span class="msel-label">${allText}</span><span class="msel-caret" aria-hidden="true">▾</span></summary>
       <ul class="msel-list">${opts.map(([v, t]) => `<li><label><input type="checkbox" value="${esc(v)}"> <span>${esc(t)}</span></label></li>`).join('')}</ul>
     </details>`;
       return msel('f-circuit', 'Filter by circuits', 'All circuits', 'circuits', usedCircuits.map((c) => [c.id, c.name]))
