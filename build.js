@@ -72,6 +72,18 @@ const clashMap = new Map();
 }
 const clashing = all.filter((m) => clashMap.has(m.id));
 const upcomingClashes = clashing.filter((m) => (m.end ?? m.start) >= TODAY);
+// Weekends, not meetings. Fifty-four meetings clash, but they land on twenty
+// weekends, and a count of meetings labelled as dates reads as nonsense when it
+// exceeds the number of weeks in a season. Overlapping meetings are one weekend.
+const clashWeekends = upcomingClashes
+  .slice().sort((a, b) => a.start.localeCompare(b.start))
+  .reduce((acc, m) => {
+    const end = m.end ?? m.start;
+    const last = acc[acc.length - 1];
+    if (last && m.start <= last.end) { if (end > last.end) last.end = end; }
+    else acc.push({ end });
+    return acc;
+  }, []).length;
 
 /* ---------- formatting ---------- */
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -179,7 +191,7 @@ function meetingRow(m, { base, next }) {
     m.round ? `Round ${esc(m.round)}` : null,
     m.name ? esc(m.name) : null,
   ].filter(Boolean).join(' <span class="sep">\u00b7</span> ');
-  return `<details class="mtg${m.example ? ' is-example' : ''}${past ? ' mtg--past' : ''}${m.id === next ? ' mtg--next' : ''}" data-search="${esc(search)}" data-circuit="${esc(m.circuit ?? '')}" data-organiser="${esc(m.organiser)}" data-type="${esc(c?.type ?? '')}" data-status="${esc(status)}" data-kind="${esc(kind)}" data-clash="${clash.length ? '1' : '0'}">
+  return `<details class="mtg${m.example ? ' is-example' : ''}${past ? ' mtg--past' : ''}${m.id === next ? ' mtg--next' : ''}" data-search="${esc(search)}" data-circuit="${esc(m.circuit ?? '')}" data-organiser="${esc(m.organiser)}" data-type="${esc(c?.type ?? '')}" data-status="${esc(status)}" data-kind="${esc(kind)}" data-clash="${clash.length ? '1' : '0'}" data-start="${m.start}" data-end="${esc(m.end ?? m.start)}">
   <summary>
     <div class="mtg-date"><b>${esc(dl.big)}</b><span>${esc(dl.small)}</span><em>${esc(dayLabel(m))}</em></div>
     <div class="mtg-main">
@@ -666,7 +678,7 @@ write('index.html', layout({
   <div class="stat"><b id="stat-meetings">${upcoming.filter((m) => (m.kind ?? 'race') === 'race').length}</b><span>Race meetings</span></div>
   <div class="stat"><b id="stat-clubs">${new Set(upcoming.map((m) => m.organiser)).size}</b><span>Clubs</span></div>
   <div class="stat"><b id="stat-circuits">${new Set(upcoming.map((m) => m.circuit).filter(Boolean)).size}</b><span>Circuits</span></div>
-  ${upcomingClashes.length ? `<a class="stat stat--alert" href="clashes/"><b id="stat-clashes">${upcomingClashes.length}</b><span>Date clashes</span></a>` : ''}
+  ${clashWeekends ? `<a class="stat stat--alert" href="clashes/"><b id="stat-clashes">${clashWeekends}</b><span>Clash weekends</span></a>` : ''}
 </div>
 ${(() => {
   const circuitsWithPace = usedCircuits.filter((c) => PACE.some((p) => p.circuit === c.id));
@@ -973,7 +985,9 @@ write('clashes/index.html', layout({
   canonical: '/clashes/', base: '../', wide: true,
   body: `<nav class="crumbs"><a href="../">Calendar</a> <span>/</span> Clashes</nav>
 <h1>Date clashes</h1>
-<p class="lede">Weekends where two clubs are running at once, so you have to pick. ${upcomingClashes.length} of ${upcoming.filter((m) => (m.kind ?? 'race') === 'race').length} upcoming race meetings clash with another club\u2019s.</p>
+<p class="lede">Weekends where two clubs are running at once, so you have to pick one.
+${clashWeekends} such weekends in the season, accounting for ${upcomingClashes.length} of the
+${upcoming.filter((m) => (m.kind ?? 'race') === 'race').length} upcoming race meetings listed below.</p>
 ${upcomingClashes.length ? LISTHEAD + monthList(upcomingClashes, { base: '../' }) : '<p class="empty">No clashes in the calendar. Add more clubs and that will change.</p>'}`,
 }));
 

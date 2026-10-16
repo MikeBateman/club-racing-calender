@@ -35,23 +35,33 @@
   };
   var LABELS = {
     meetings: ['Race meeting', 'Race meetings'], clubs: ['Club', 'Clubs'],
-    circuits: ['Circuit', 'Circuits'], clashes: ['Date clash', 'Date clashes']
+    circuits: ['Circuit', 'Circuits'], clashes: ['Clash weekend', 'Clash weekends']
   };
   var HEAD_LABELS = {
     meetings: ['Meeting', 'Meetings'], clubs: ['Club', 'Clubs'], circuits: ['Circuit', 'Circuits']
   };
   function stats(vis) {
-    var races = 0, clashes = 0, clubs = {}, circuits = {};
+    var races = 0, clubs = {}, circuits = {}, clashDates = [];
     for (var i = 0; i < vis.length; i++) {
       var d = vis[i].dataset;
       if (d.kind === 'race') races++;
-      if (d.clash === '1') clashes++;
+      if (d.clash === '1') clashDates.push({ s: d.start, e: d.end || d.start });
       if (d.organiser) clubs[d.organiser] = 1;
       // A meeting with no venue yet would otherwise count as a circuit.
       if (d.circuit) circuits[d.circuit] = 1;
     }
+    // Weekends, not meetings: two clubs clashing on one weekend is one weekend
+    // you have to choose on, and counting the meetings gave a number larger
+    // than the season has weeks.
+    clashDates.sort(function (a, b) { return a.s < b.s ? -1 : a.s > b.s ? 1 : 0; });
+    var weekends = 0, until = '';
+    for (i = 0; i < clashDates.length; i++) {
+      if (clashDates[i].s <= until) {
+        if (clashDates[i].e > until) until = clashDates[i].e;
+      } else { weekends++; until = clashDates[i].e; }
+    }
     var n = { meetings: races, clubs: Object.keys(clubs).length,
-              circuits: Object.keys(circuits).length, clashes: clashes };
+              circuits: Object.keys(circuits).length, clashes: weekends };
     // Filtering to one club is a normal thing to do, and "1 Clubs" reads as a
     // bug. The labels move with the number.
     for (var k in statEls) if (statEls[k]) {
